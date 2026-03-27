@@ -7,14 +7,20 @@ import SettingsScreen from './components/SettingsScreen';
 import TodoList from './components/TodoList';
 import DiarySection from './components/DiarySection';
 import DiaryEntryForm from './components/DiaryEntryForm';
+import EventLogModal from './components/EventLogModal';
 import useSentiment from './hooks/useSentiment';
 import useTodos from './hooks/useTodos';
 import useDiary from './hooks/useDiary';
 import useReminders from './hooks/useReminders';
+import useMode from './hooks/useMode';
+import useEventLog from './hooks/useEventLog';
+import config from './config';
 
 export default function App() {
-  const [mode, setMode] = useState('a');
+  const { mode, updateMode, isLoaded: modeLoaded } = useMode();
   const [screen, setScreen] = useState('main');
+  const [logModalVisible, setLogModalVisible] = useState(false);
+  const { logEvent } = useEventLog();
   const {
     isLoaded,
     definitions,
@@ -49,10 +55,10 @@ export default function App() {
   const handleToggleMode = () => {
     const next = mode === 'a' ? 'b' : 'a';
     activateMode(next);
-    setMode(next);
+    updateMode(next);
   };
 
-  if (!isLoaded) {
+  if (!isLoaded || !modeLoaded) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#000" />
@@ -120,6 +126,18 @@ export default function App() {
         />
       </ScrollView>
 
+      <View style={styles.fixedFooter}>
+        <TouchableOpacity style={styles.logBtn} onPress={() => setLogModalVisible(true)}>
+          <Text style={styles.logBtnText}>{config.eventLog.buttonLabel}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <EventLogModal
+        visible={logModalVisible}
+        onSave={(score) => { logEvent(score); setLogModalVisible(false); }}
+        onClose={() => setLogModalVisible(false)}
+      />
+
       <StatusBar style="auto" />
     </SafeAreaView>
   );
@@ -148,7 +166,29 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   scroll: {
-    paddingBottom: 40,
+    paddingBottom: 100,
+  },
+  fixedFooter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    paddingBottom: 32,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  logBtn: {
+    backgroundColor: '#000',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  logBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
   toggleSection: {
     alignItems: 'center',

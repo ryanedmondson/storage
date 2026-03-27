@@ -17,6 +17,10 @@ export default {
     { id: 'config_reminder_b_1', mode: 'b', label: 'Step away from screens', intervalMinutes: 90 },
     { id: 'config_reminder_b_2', mode: 'b', label: 'Check in with yourself', intervalMinutes: 120 },
   ],
+  eventLog: {
+    buttonLabel: 'Log event',
+    scoreLabel: 'Score',
+  },
   diary: {
     addButtonLabel: 'Add to diary',
     fields: [
