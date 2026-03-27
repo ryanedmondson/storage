@@ -4,6 +4,10 @@ export default {
     b: 'Mode B',
   },
   buttonLabel: 'Change status',
+  timings: {
+    // Minutes before daily data resets. 1440 = once per day. Set low to test resets quickly.
+    dailyIntervalMinutes: 1,
+  },
   sentiment: {
     label: 'Confidence level',
   },

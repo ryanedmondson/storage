@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import config from '../config';
 import {
-  getTodayKey,
+  getSessionKey,
   loadCompletions,
   loadDefinitions,
   saveCompletions,
@@ -14,7 +14,7 @@ export default function useTodos() {
   // Fixed completions are in-memory only — they reset every time a mode is activated
   const [fixedCompletions, setFixedCompletions] = useState({ a: {}, b: {} });
   const [isLoaded, setIsLoaded] = useState(false);
-  const todayKey = getTodayKey();
+  const todayKey = getSessionKey(config.timings.dailyIntervalMinutes);
 
   useEffect(() => {
     (async () => {

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const getTodayKey = () => new Date().toISOString().slice(0, 10);
+export const getSessionKey = (intervalMinutes) =>
+  `session_${Math.floor(Date.now() / (intervalMinutes * 60 * 1000))}`;
 
 export async function loadDefinitions() {
   const raw = await AsyncStorage.getItem('todo_definitions');

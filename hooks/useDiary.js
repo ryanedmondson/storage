@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getTodayKey, loadDiaryEntries, saveDiaryEntries } from '../storage';
+import config from '../config';
+import { getSessionKey, loadDiaryEntries, saveDiaryEntries } from '../storage';
 
 export default function useDiary() {
   const [entries, setEntries] = useState([]);
-  const todayKey = getTodayKey();
+  const todayKey = getSessionKey(config.timings.dailyIntervalMinutes);
 
   useEffect(() => {
     loadDiaryEntries(todayKey).then(setEntries);
