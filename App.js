@@ -10,6 +10,7 @@ import DiaryEntryForm from './components/DiaryEntryForm';
 import useSentiment from './hooks/useSentiment';
 import useTodos from './hooks/useTodos';
 import useDiary from './hooks/useDiary';
+import useReminders from './hooks/useReminders';
 
 export default function App() {
   const [mode, setMode] = useState('a');
@@ -30,6 +31,20 @@ export default function App() {
 
   const { level, selectLevel } = useSentiment();
   const { entries, addEntry, deleteEntry } = useDiary();
+  const {
+    reminderDefs,
+    dueRemindersForMode,
+    completeReminder,
+    toggleSuggestedReminder,
+    addCustomReminder,
+    deleteCustomReminder,
+  } = useReminders();
+
+  const reminderIds = new Set(reminderDefs.map((r) => r.id));
+  const handleToggleFixed = (id) => {
+    if (reminderIds.has(id)) completeReminder(id);
+    else toggleFixedCompletion(mode, id);
+  };
 
   const handleToggleMode = () => {
     const next = mode === 'a' ? 'b' : 'a';
@@ -61,6 +76,10 @@ export default function App() {
         onToggleSuggested={toggleSuggested}
         onAddCustom={addCustomTodo}
         onDeleteCustom={deleteCustomTodo}
+        reminderDefs={reminderDefs}
+        onToggleSuggestedReminder={toggleSuggestedReminder}
+        onAddCustomReminder={addCustomReminder}
+        onDeleteCustomReminder={deleteCustomReminder}
         onClose={() => setScreen('main')}
       />
     );
@@ -84,9 +103,9 @@ export default function App() {
         <View style={styles.divider} />
 
         <TodoList
-          fixedTodos={todosForMode(mode, 'fixed')}
+          fixedTodos={[...todosForMode(mode, 'fixed'), ...dueRemindersForMode(mode)]}
           fixedCompletions={fixedCompletions[mode]}
-          onToggleFixed={(id) => toggleFixedCompletion(mode, id)}
+          onToggleFixed={handleToggleFixed}
           dailyTodos={todosForMode(mode, 'daily')}
           dailyCompletions={completions}
           onToggleDaily={toggleCompletion}

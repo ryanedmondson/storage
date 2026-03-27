@@ -20,6 +20,24 @@ export async function saveCompletions(dateKey, completions) {
   await AsyncStorage.setItem(`completions_${dateKey}`, JSON.stringify(completions));
 }
 
+export async function loadReminderDefs() {
+  const raw = await AsyncStorage.getItem('reminder_defs');
+  return raw ? JSON.parse(raw) : null;
+}
+
+export async function saveReminderDefs(defs) {
+  await AsyncStorage.setItem('reminder_defs', JSON.stringify(defs));
+}
+
+export async function loadReminderCompletions() {
+  const raw = await AsyncStorage.getItem('reminder_completions');
+  return raw ? JSON.parse(raw) : {};
+}
+
+export async function saveReminderCompletions(completions) {
+  await AsyncStorage.setItem('reminder_completions', JSON.stringify(completions));
+}
+
 export async function loadDiaryEntries(dateKey) {
   const raw = await AsyncStorage.getItem(`diary_${dateKey}`);
   return raw ? JSON.parse(raw) : [];

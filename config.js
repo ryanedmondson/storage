@@ -7,6 +7,12 @@ export default {
   sentiment: {
     label: 'Confidence level',
   },
+  reminders: [
+    { id: 'config_reminder_a_1', mode: 'a', label: 'Take a break', intervalMinutes: 60 },
+    { id: 'config_reminder_a_2', mode: 'a', label: 'Drink water', intervalMinutes: 30 },
+    { id: 'config_reminder_b_1', mode: 'b', label: 'Step away from screens', intervalMinutes: 90 },
+    { id: 'config_reminder_b_2', mode: 'b', label: 'Check in with yourself', intervalMinutes: 120 },
+  ],
   diary: {
     addButtonLabel: 'Add to diary',
     fields: [
