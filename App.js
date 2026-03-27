@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ModeToggle from './components/ModeToggle';
 import SentimentTracker from './components/SentimentTracker';
 import SettingsScreen from './components/SettingsScreen';
 import TodoList from './components/TodoList';
+import DiarySection from './components/DiarySection';
+import DiaryEntryForm from './components/DiaryEntryForm';
 import useSentiment from './hooks/useSentiment';
 import useTodos from './hooks/useTodos';
+import useDiary from './hooks/useDiary';
 
 export default function App() {
   const [mode, setMode] = useState('a');
@@ -26,6 +29,7 @@ export default function App() {
   } = useTodos();
 
   const { level, selectLevel } = useSentiment();
+  const { entries, addEntry, deleteEntry } = useDiary();
 
   const handleToggleMode = () => {
     const next = mode === 'a' ? 'b' : 'a';
@@ -38,6 +42,15 @@ export default function App() {
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#000" />
       </View>
+    );
+  }
+
+  if (screen === 'diary-form') {
+    return (
+      <DiaryEntryForm
+        onSubmit={(fields) => { addEntry(fields); setScreen('main'); }}
+        onCancel={() => setScreen('main')}
+      />
     );
   }
 
@@ -57,26 +70,36 @@ export default function App() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => setScreen('settings')}>
-          <Text style={styles.settingsBtn}>Settings</Text>
+          <Text style={styles.topBarBtn}>Settings</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.toggleSection}>
-        <ModeToggle mode={mode} onToggle={handleToggleMode} />
-      </View>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={styles.toggleSection}>
+          <ModeToggle mode={mode} onToggle={handleToggleMode} />
+        </View>
 
-      <SentimentTracker level={level} onSelect={selectLevel} />
+        <SentimentTracker level={level} onSelect={selectLevel} />
 
-      <View style={styles.divider} />
+        <View style={styles.divider} />
 
-      <TodoList
-        fixedTodos={todosForMode(mode, 'fixed')}
-        fixedCompletions={fixedCompletions[mode]}
-        onToggleFixed={(id) => toggleFixedCompletion(mode, id)}
-        dailyTodos={todosForMode(mode, 'daily')}
-        dailyCompletions={completions}
-        onToggleDaily={toggleCompletion}
-      />
+        <TodoList
+          fixedTodos={todosForMode(mode, 'fixed')}
+          fixedCompletions={fixedCompletions[mode]}
+          onToggleFixed={(id) => toggleFixedCompletion(mode, id)}
+          dailyTodos={todosForMode(mode, 'daily')}
+          dailyCompletions={completions}
+          onToggleDaily={toggleCompletion}
+        />
+
+        <View style={styles.divider} />
+
+        <DiarySection
+          entries={entries}
+          onAdd={() => setScreen('diary-form')}
+          onDelete={deleteEntry}
+        />
+      </ScrollView>
 
       <StatusBar style="auto" />
     </SafeAreaView>
@@ -100,10 +123,13 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 4,
   },
-  settingsBtn: {
+  topBarBtn: {
     fontSize: 15,
     fontWeight: '600',
     color: '#000',
+  },
+  scroll: {
+    paddingBottom: 40,
   },
   toggleSection: {
     alignItems: 'center',
@@ -113,6 +139,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#f0f0f0',
     marginHorizontal: 24,
-    marginBottom: 16,
+    marginVertical: 16,
   },
 });

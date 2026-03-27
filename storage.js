@@ -20,6 +20,15 @@ export async function saveCompletions(dateKey, completions) {
   await AsyncStorage.setItem(`completions_${dateKey}`, JSON.stringify(completions));
 }
 
+export async function loadDiaryEntries(dateKey) {
+  const raw = await AsyncStorage.getItem(`diary_${dateKey}`);
+  return raw ? JSON.parse(raw) : [];
+}
+
+export async function saveDiaryEntries(dateKey, entries) {
+  await AsyncStorage.setItem(`diary_${dateKey}`, JSON.stringify(entries));
+}
+
 export async function loadSentiment(dateKey) {
   const raw = await AsyncStorage.getItem(`sentiment_${dateKey}`);
   return raw ? JSON.parse(raw) : null;

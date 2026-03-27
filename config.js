@@ -7,6 +7,14 @@ export default {
   sentiment: {
     label: 'Confidence level',
   },
+  diary: {
+    addButtonLabel: 'Add to diary',
+    fields: [
+      { id: 'notes', label: 'Notes' },
+      { id: 'highlights', label: 'Highlights' },
+      { id: 'challenges', label: 'Challenges' },
+    ],
+  },
   suggestedTodos: [
     // Mode A — fixed (must complete each time mode is activated)
     { id: 'suggested_a_fixed_1', mode: 'a', type: 'fixed', label: 'Review today\'s schedule' },
