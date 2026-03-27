@@ -1,17 +1,12 @@
-import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import config from '../config';
 
-export default function ModeToggle() {
-  const [mode, setMode] = useState('a');
-
-  const toggle = () => setMode((m) => (m === 'a' ? 'b' : 'a'));
-
+export default function ModeToggle({ mode, onToggle }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Current mode</Text>
       <Text style={styles.mode}>{config.modes[mode]}</Text>
-      <TouchableOpacity style={styles.button} onPress={toggle}>
+      <TouchableOpacity style={styles.button} onPress={onToggle}>
         <Text style={styles.buttonText}>{config.buttonLabel}</Text>
       </TouchableOpacity>
     </View>
