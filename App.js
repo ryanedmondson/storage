@@ -2,8 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ModeToggle from './components/ModeToggle';
+import SentimentTracker from './components/SentimentTracker';
 import SettingsScreen from './components/SettingsScreen';
 import TodoList from './components/TodoList';
+import useSentiment from './hooks/useSentiment';
 import useTodos from './hooks/useTodos';
 
 export default function App() {
@@ -13,12 +15,23 @@ export default function App() {
     isLoaded,
     definitions,
     completions,
+    fixedCompletions,
     todosForMode,
     toggleCompletion,
+    toggleFixedCompletion,
+    activateMode,
     toggleSuggested,
     addCustomTodo,
     deleteCustomTodo,
   } = useTodos();
+
+  const { level, selectLevel } = useSentiment();
+
+  const handleToggleMode = () => {
+    const next = mode === 'a' ? 'b' : 'a';
+    activateMode(next);
+    setMode(next);
+  };
 
   if (!isLoaded) {
     return (
@@ -49,15 +62,20 @@ export default function App() {
       </View>
 
       <View style={styles.toggleSection}>
-        <ModeToggle mode={mode} onToggle={() => setMode((m) => (m === 'a' ? 'b' : 'a'))} />
+        <ModeToggle mode={mode} onToggle={handleToggleMode} />
       </View>
+
+      <SentimentTracker level={level} onSelect={selectLevel} />
 
       <View style={styles.divider} />
 
       <TodoList
-        todos={todosForMode(mode)}
-        completions={completions}
-        onToggle={toggleCompletion}
+        fixedTodos={todosForMode(mode, 'fixed')}
+        fixedCompletions={fixedCompletions[mode]}
+        onToggleFixed={(id) => toggleFixedCompletion(mode, id)}
+        dailyTodos={todosForMode(mode, 'daily')}
+        dailyCompletions={completions}
+        onToggleDaily={toggleCompletion}
       />
 
       <StatusBar style="auto" />

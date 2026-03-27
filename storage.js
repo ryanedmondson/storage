@@ -19,3 +19,12 @@ export async function loadCompletions(dateKey) {
 export async function saveCompletions(dateKey, completions) {
   await AsyncStorage.setItem(`completions_${dateKey}`, JSON.stringify(completions));
 }
+
+export async function loadSentiment(dateKey) {
+  const raw = await AsyncStorage.getItem(`sentiment_${dateKey}`);
+  return raw ? JSON.parse(raw) : null;
+}
+
+export async function saveSentiment(dateKey, level) {
+  await AsyncStorage.setItem(`sentiment_${dateKey}`, JSON.stringify(level));
+}
