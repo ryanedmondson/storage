@@ -5,7 +5,7 @@ export default {
   },
   buttonLabel: 'Change status',
   timings: {
-    // Minutes before daily data resets. 1440 = once per day. Set low to test resets quickly.
+    // Minutes before daily to-dos reset. Set low to test, use 1440 for once-per-day.
     dailyIntervalMinutes: 1,
   },
   sentiment: {

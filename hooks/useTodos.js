@@ -4,17 +4,21 @@ import {
   getSessionKey,
   loadCompletions,
   loadDefinitions,
+  loadFixedCompletions,
   saveCompletions,
   saveDefinitions,
+  saveFixedCompletions,
 } from '../storage';
 
 export default function useTodos() {
   const [definitions, setDefinitions] = useState([]);
   const [completions, setCompletions] = useState({});
-  // Fixed completions are in-memory only — they reset every time a mode is activated
   const [fixedCompletions, setFixedCompletions] = useState({ a: {}, b: {} });
   const [isLoaded, setIsLoaded] = useState(false);
-  const todayKey = getSessionKey(config.timings.dailyIntervalMinutes);
+
+  // Daily todos reset on a configurable interval; use a fresh key each render so
+  // the bucket is always current (saves are always keyed correctly).
+  const dailyKey = getSessionKey(config.timings.dailyIntervalMinutes);
 
   useEffect(() => {
     (async () => {
@@ -32,7 +36,6 @@ export default function useTodos() {
       } else {
         const configMap = new Map(config.suggestedTodos.map((s) => [s.id, s]));
 
-        // Backfill type, and sync type from config for suggested todos in case it changed
         defs = defs.map((d) => {
           if (d.isSuggested && configMap.has(d.id)) {
             return { ...d, type: configMap.get(d.id).type };
@@ -40,7 +43,6 @@ export default function useTodos() {
           return d.type ? d : { ...d, type: 'daily' };
         });
 
-        // Merge any new suggested todos added in config since last launch
         const existingIds = new Set(defs.map((d) => d.id));
         for (const s of config.suggestedTodos) {
           if (!existingIds.has(s.id)) {
@@ -51,7 +53,14 @@ export default function useTodos() {
 
       await saveDefinitions(defs);
       setDefinitions(defs);
-      setCompletions(await loadCompletions(todayKey));
+
+      const [daily, fixedA, fixedB] = await Promise.all([
+        loadCompletions(getSessionKey(config.timings.dailyIntervalMinutes)),
+        loadFixedCompletions('a'),
+        loadFixedCompletions('b'),
+      ]);
+      setCompletions(daily);
+      setFixedCompletions({ a: fixedA, b: fixedB });
       setIsLoaded(true);
     })();
   }, []);
@@ -64,19 +73,19 @@ export default function useTodos() {
   const toggleCompletion = (id) => {
     const updated = { ...completions, [id]: !completions[id] };
     setCompletions(updated);
-    saveCompletions(todayKey, updated);
+    saveCompletions(dailyKey, updated);
   };
 
   const toggleFixedCompletion = (mode, id) => {
-    setFixedCompletions((prev) => ({
-      ...prev,
-      [mode]: { ...prev[mode], [id]: !prev[mode][id] },
-    }));
+    const updatedMode = { ...fixedCompletions[mode], [id]: !fixedCompletions[mode][id] };
+    setFixedCompletions((prev) => ({ ...prev, [mode]: updatedMode }));
+    saveFixedCompletions(mode, updatedMode);
   };
 
-  // Call this when switching into a mode — resets that mode's fixed completions
+  // Call when switching into a mode — clears that mode's fixed completions
   const activateMode = (mode) => {
     setFixedCompletions((prev) => ({ ...prev, [mode]: {} }));
+    saveFixedCompletions(mode, {});
   };
 
   const toggleSuggested = (id) => {
@@ -85,7 +94,6 @@ export default function useTodos() {
     if (existing) {
       updated = definitions.map((d) => (d.id === id ? { ...d, enabled: !d.enabled } : d));
     } else {
-      // Definition missing from state (e.g. stale cache) — pull from config and add it as enabled
       const fromConfig = config.suggestedTodos.find((s) => s.id === id);
       if (!fromConfig) return;
       updated = [

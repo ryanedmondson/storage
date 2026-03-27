@@ -1,7 +1,26 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
 export const getSessionKey = (intervalMinutes) =>
   `session_${Math.floor(Date.now() / (intervalMinutes * 60 * 1000))}`;
+
+export async function loadFixedCompletions(mode) {
+  const raw = await AsyncStorage.getItem(`fixed_completions_${mode}`);
+  return raw ? JSON.parse(raw) : {};
+}
+
+export async function saveFixedCompletions(mode, completions) {
+  await AsyncStorage.setItem(`fixed_completions_${mode}`, JSON.stringify(completions));
+}
+
+export async function loadMode() {
+  return await AsyncStorage.getItem('mode');
+}
+
+export async function saveMode(mode) {
+  await AsyncStorage.setItem('mode', mode);
+}
 
 export async function loadDefinitions() {
   const raw = await AsyncStorage.getItem('todo_definitions');
