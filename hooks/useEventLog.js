@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getTodayKey, loadEventLog, saveEventLog } from '../storage';
+import config from '../config';
+import { getSessionKey, loadEventLog, saveEventLog } from '../storage';
 
 export default function useEventLog() {
   const [events, setEvents] = useState([]);
-  const todayKey = getTodayKey();
+  const todayKey = getSessionKey(config.timings.dailyIntervalMinutes);
 
   useEffect(() => {
     loadEventLog(todayKey).then(setEvents);

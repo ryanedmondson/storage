@@ -8,6 +8,7 @@ import TodoList from './components/TodoList';
 import DiarySection from './components/DiarySection';
 import DiaryEntryForm from './components/DiaryEntryForm';
 import EventLogModal from './components/EventLogModal';
+import DataScreen from './components/DataScreen';
 import useSentiment from './hooks/useSentiment';
 import useTodos from './hooks/useTodos';
 import useDiary from './hooks/useDiary';
@@ -75,6 +76,10 @@ export default function App() {
     );
   }
 
+  if (screen === 'data') {
+    return <DataScreen onClose={() => setScreen('main')} />;
+  }
+
   if (screen === 'settings') {
     return (
       <SettingsScreen
@@ -94,6 +99,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => setScreen('data')}>
+          <Text style={styles.topBarBtn}>Data</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => setScreen('settings')}>
           <Text style={styles.topBarBtn}>Settings</Text>
         </TouchableOpacity>
@@ -155,7 +163,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   topBar: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 16,
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 4,

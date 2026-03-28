@@ -9,6 +9,9 @@ export default function useMode() {
     loadMode().then((saved) => {
       if (saved) setMode(saved);
       setIsLoaded(true);
+    }).catch((e) => {
+      console.error('useMode load error:', e);
+      setIsLoaded(true);
     });
   }, []);
 

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getTodayKey, loadSentiment, saveSentiment } from '../storage';
+import config from '../config';
+import { getSessionKey, loadSentiment, saveSentiment } from '../storage';
 
 export default function useSentiment() {
   const [level, setLevel] = useState(null);
-  const todayKey = getTodayKey();
+  const todayKey = getSessionKey(config.timings.dailyIntervalMinutes);
 
   useEffect(() => {
     loadSentiment(todayKey).then(setLevel);

@@ -22,6 +22,7 @@ export default function useTodos() {
 
   useEffect(() => {
     (async () => {
+      try {
       let defs = await loadDefinitions();
 
       if (!defs) {
@@ -62,6 +63,10 @@ export default function useTodos() {
       setCompletions(daily);
       setFixedCompletions({ a: fixedA, b: fixedB });
       setIsLoaded(true);
+      } catch (e) {
+        console.error('useTodos load error:', e);
+        setIsLoaded(true);
+      }
     })();
   }, []);
 
