@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: '#EDE3D7',
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 20,
@@ -25,15 +25,15 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#D4A437',
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: '#3D2B1F',
   },
   arrow: {
     fontSize: 13,
-    color: '#999',
+    color: '#B5A499',
   },
 });

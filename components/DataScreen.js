@@ -216,77 +216,78 @@ export default function DataScreen({ onClose }) {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#f8f8f8' },
+  safe: { flex: 1, backgroundColor: '#F5EEE3' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 20, paddingVertical: 14,
-    borderBottomWidth: 1, borderBottomColor: '#f0f0f0', backgroundColor: '#fff',
+    borderBottomWidth: 1, borderBottomColor: '#E5D9CB', backgroundColor: '#FFFDF8',
   },
-  headerTitle: { fontSize: 18, fontWeight: '700' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#3D2B1F' },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  refreshText: { fontSize: 15, color: '#888', fontWeight: '600' },
-  doneBtn: { fontSize: 16, color: '#000', fontWeight: '600' },
+  refreshText: { fontSize: 15, color: '#8C7B6B', fontWeight: '600' },
+  doneBtn: { fontSize: 16, color: '#3D2B1F', fontWeight: '600' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  emptyText: { fontSize: 15, color: '#aaa' },
+  emptyText: { fontSize: 15, color: '#B5A499' },
   content: { padding: 16, gap: 24, paddingBottom: 40 },
 
   // Session
   sessionBlock: { gap: 10 },
   sessionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 4 },
-  sessionTime: { fontSize: 13, fontWeight: '700', color: '#555' },
+  sessionTime: { fontSize: 13, fontWeight: '700', color: '#8C7B6B' },
   currentBadge: {
-    fontSize: 10, fontWeight: '700', color: '#fff', backgroundColor: '#000',
+    fontSize: 10, fontWeight: '700', color: '#FFFDF8', backgroundColor: '#D4A437',
     paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, textTransform: 'uppercase',
   },
 
   // Card
   card: {
-    backgroundColor: '#fff', borderRadius: 12, padding: 14, gap: 8,
+    backgroundColor: '#FFFDF8', borderRadius: 14, padding: 14, gap: 8,
+    shadowColor: '#3D2B1F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 5, elevation: 2,
   },
   cardTitle: {
-    fontSize: 11, fontWeight: '700', color: '#aaa',
+    fontSize: 11, fontWeight: '700', color: '#B5A499',
     textTransform: 'uppercase', letterSpacing: 1,
   },
-  empty: { fontSize: 14, color: '#ccc' },
+  empty: { fontSize: 14, color: '#C4B5A8' },
 
   // Sentiment
   sentimentRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  sentimentScore: { fontSize: 30, fontWeight: '800', color: '#111' },
-  sentimentDenom: { fontSize: 14, color: '#aaa', marginTop: 4 },
+  sentimentScore: { fontSize: 30, fontWeight: '800', color: '#3D2B1F' },
+  sentimentDenom: { fontSize: 14, color: '#B5A499', marginTop: 4 },
 
   // Shared bar
   bar: { flex: 1, flexDirection: 'row', gap: 3, marginLeft: 4 },
-  seg: { flex: 1, height: 8, borderRadius: 4, backgroundColor: '#f0f0f0' },
-  segFilled: { backgroundColor: '#000' },
+  seg: { flex: 1, height: 8, borderRadius: 4, backgroundColor: '#EDE3D7' },
+  segFilled: { backgroundColor: '#D4A437' },
 
   // Todos
   todoMode: { gap: 2 },
-  todoModeLabel: { fontSize: 13, fontWeight: '700', color: '#333', marginTop: 4 },
+  todoModeLabel: { fontSize: 13, fontWeight: '700', color: '#3D2B1F', marginTop: 4 },
   typeLabel: {
-    fontSize: 10, fontWeight: '700', color: '#bbb',
+    fontSize: 10, fontWeight: '700', color: '#C4B5A8',
     textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 4,
   },
   todoRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 2 },
-  todoCheck: { fontSize: 13, color: '#000', fontWeight: '700', width: 16 },
-  todoCircle: { fontSize: 13, color: '#ccc', width: 16 },
-  todoLabel: { fontSize: 14, color: '#333' },
-  todoLabelDone: { textDecorationLine: 'line-through', color: '#bbb' },
+  todoCheck: { fontSize: 13, color: '#D4A437', fontWeight: '700', width: 16 },
+  todoCircle: { fontSize: 13, color: '#C4B5A8', width: 16 },
+  todoLabel: { fontSize: 14, color: '#3D2B1F' },
+  todoLabelDone: { textDecorationLine: 'line-through', color: '#C4B5A8' },
 
   // Diary
   diaryEntry: { gap: 6, paddingTop: 2 },
-  diaryBorder: { borderTopWidth: 1, borderTopColor: '#f5f5f5', marginTop: 6, paddingTop: 8 },
-  entryTime: { fontSize: 11, color: '#aaa', fontWeight: '600' },
+  diaryBorder: { borderTopWidth: 1, borderTopColor: '#EDE3D7', marginTop: 6, paddingTop: 8 },
+  entryTime: { fontSize: 11, color: '#B5A499', fontWeight: '600' },
   diaryField: { gap: 2 },
-  diaryItem: { fontSize: 14, color: '#333' },
+  diaryItem: { fontSize: 14, color: '#3D2B1F' },
 
   // Events
   eventRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  eventScore: { fontSize: 14, fontWeight: '700', color: '#111', width: 36, textAlign: 'right' },
-  eventDenom: { fontSize: 11, color: '#aaa', fontWeight: '400' },
+  eventScore: { fontSize: 14, fontWeight: '700', color: '#3D2B1F', width: 36, textAlign: 'right' },
+  eventDenom: { fontSize: 11, color: '#B5A499', fontWeight: '400' },
 
   // Raw JSON
   rawToggle: { alignItems: 'center', paddingVertical: 6 },
-  rawToggleText: { fontSize: 12, color: '#bbb', fontWeight: '600' },
-  rawScroll: { backgroundColor: '#f4f4f4', borderRadius: 8, padding: 10, maxHeight: 200 },
-  rawText: { fontFamily: 'monospace', fontSize: 11, color: '#555', lineHeight: 17 },
+  rawToggleText: { fontSize: 12, color: '#B5A499', fontWeight: '600' },
+  rawScroll: { backgroundColor: '#EDE3D7', borderRadius: 8, padding: 10, maxHeight: 200 },
+  rawText: { fontFamily: 'monospace', fontSize: 11, color: '#8C7B6B', lineHeight: 17 },
 });

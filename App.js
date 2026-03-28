@@ -58,15 +58,15 @@ function TabBar({ active, onChange }) {
 const tabStyles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFDF8',
     borderTopWidth: 1,
-    borderTopColor: '#EBEBEB',
+    borderTopColor: '#E5D9CB',
     paddingTop: 10,
     paddingBottom: 10,
   },
   tab:         { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 2 },
-  label:       { fontSize: 10, fontWeight: '500', color: '#B0B0B0', letterSpacing: 0.2 },
-  labelActive: { color: '#1A1A1A', fontWeight: '700' },
+  label:       { fontSize: 10, fontWeight: '500', color: '#B5A499', letterSpacing: 0.2 },
+  labelActive: { color: '#3D2B1F', fontWeight: '700' },
 });
 
 // ── App ────────────────────────────────────────────────────────────────────────
@@ -197,8 +197,8 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
-  safe:    { flex: 1, backgroundColor: '#F5F5F5' },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF8F0' },
+  safe:    { flex: 1, backgroundColor: '#F5EEE3' },
   body:    { flex: 1 },
   fill:    { flex: 1 },
 
@@ -208,16 +208,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 24, paddingBottom: 12,
   },
-  pageTitle: { fontSize: 30, fontWeight: '800', color: '#1A1A1A', letterSpacing: -0.5 },
+  pageTitle: { fontSize: 30, fontWeight: '800', color: '#3D2B1F', letterSpacing: -0.5 },
   sections:  { gap: 12, paddingHorizontal: 16, paddingTop: 4 },
 
   // FAB
   fab: {
     position: 'absolute', bottom: 16, left: 16, right: 16,
-    backgroundColor: '#1A1A1A', borderRadius: 14,
+    backgroundColor: '#3D2B1F', borderRadius: 14,
     paddingVertical: 17, alignItems: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18, shadowRadius: 12, elevation: 6,
+    shadowColor: '#3D2B1F', shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25, shadowRadius: 12, elevation: 6,
   },
-  fabText: { color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
+  fabText: { color: '#FFF8F0', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
 });

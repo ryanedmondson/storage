@@ -354,79 +354,79 @@ function LegendLine({ color, label }) {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#F5F5F5' },
+  safe: { flex: 1, backgroundColor: '#F5EEE3' },
 
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 20, paddingTop: 24, paddingBottom: 12,
   },
-  headerTitle: { fontSize: 30, fontWeight: '800', color: '#1A1A1A', letterSpacing: -0.5 },
+  headerTitle: { fontSize: 30, fontWeight: '800', color: '#3D2B1F', letterSpacing: -0.5 },
   dataBtn: {
-    backgroundColor: '#F0F0F0', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+    backgroundColor: '#EDE3D7', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
   },
-  dataBtnText: { fontSize: 13, fontWeight: '600', color: '#717171' },
+  dataBtnText: { fontSize: 13, fontWeight: '600', color: '#8C7B6B' },
 
   content: { padding: 16, gap: 14, paddingBottom: 40 },
 
   // Pickers
   card: {
-    backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 4,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+    backgroundColor: '#FFFDF8', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 4,
+    shadowColor: '#3D2B1F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 6, elevation: 2,
   },
-  cardDivider: { height: 1, backgroundColor: '#F2F2F2' },
+  cardDivider: { height: 1, backgroundColor: '#EDE3D7' },
   pickerRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14,
   },
-  pickerLabel: { fontSize: 15, fontWeight: '600', color: '#1A1A1A' },
+  pickerLabel: { fontSize: 15, fontWeight: '600', color: '#3D2B1F' },
   pickerBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  pickerBtnText: { fontSize: 14, color: '#B0B0B0', fontWeight: '500' },
-  pickerCaret: { fontSize: 20, color: '#D0D0D0', lineHeight: 22 },
+  pickerBtnText: { fontSize: 14, color: '#B5A499', fontWeight: '500' },
+  pickerCaret: { fontSize: 20, color: '#C4B5A8', lineHeight: 22 },
 
   // Modal sheet
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
+  overlay: { flex: 1, backgroundColor: 'rgba(61,43,31,0.35)', justifyContent: 'flex-end' },
   sheet: {
-    backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    backgroundColor: '#FFFDF8', borderTopLeftRadius: 24, borderTopRightRadius: 24,
     paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40,
   },
   sheetTitle: {
-    fontSize: 11, fontWeight: '700', color: '#B0B0B0',
+    fontSize: 11, fontWeight: '700', color: '#B5A499',
     textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
   },
   sheetOption: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F2F2F2',
+    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#EDE3D7',
   },
-  sheetOptionText: { fontSize: 16, color: '#1A1A1A', fontWeight: '400' },
-  sheetOptionActive: { fontWeight: '700', color: '#1A1A1A' },
-  sheetCheck: { fontSize: 15, color: '#1A1A1A', fontWeight: '700' },
+  sheetOptionText: { fontSize: 16, color: '#3D2B1F', fontWeight: '400' },
+  sheetOptionActive: { fontWeight: '700', color: '#3D2B1F' },
+  sheetCheck: { fontSize: 15, color: '#D4A437', fontWeight: '700' },
 
   // Legend
   legend: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 4 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   legendDot: { width: 10, height: 10, borderRadius: 5 },
   legendLineSwatch: { width: 18, height: 3, borderRadius: 2 },
-  legendText: { fontSize: 12, color: '#717171', fontWeight: '500' },
+  legendText: { fontSize: 12, color: '#8C7B6B', fontWeight: '500' },
 
   // Chart
   chartCard: {
-    backgroundColor: '#fff', borderRadius: 16, padding: 14, overflow: 'hidden',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+    backgroundColor: '#FFFDF8', borderRadius: 16, padding: 14, overflow: 'hidden',
+    shadowColor: '#3D2B1F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 6, elevation: 2,
   },
-  axisLabel: { fontSize: 9, color: '#C0C0C0' },
+  axisLabel: { fontSize: 9, color: '#C4B5A8' },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10 },
   statBox: {
-    flex: 1, backgroundColor: '#fff', borderRadius: 16,
+    flex: 1, backgroundColor: '#FFFDF8', borderRadius: 16,
     paddingVertical: 16, alignItems: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+    shadowColor: '#3D2B1F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 6, elevation: 2,
   },
-  statValue: { fontSize: 22, fontWeight: '800', color: '#1A1A1A' },
-  statSuffix: { fontSize: 12, fontWeight: '400', color: '#B0B0B0' },
-  statLabel: { fontSize: 10, color: '#B0B0B0', fontWeight: '600', marginTop: 3, textTransform: 'uppercase', letterSpacing: 0.5 },
+  statValue: { fontSize: 22, fontWeight: '800', color: '#3D2B1F' },
+  statSuffix: { fontSize: 12, fontWeight: '400', color: '#B5A499' },
+  statLabel: { fontSize: 10, color: '#B5A499', fontWeight: '600', marginTop: 3, textTransform: 'uppercase', letterSpacing: 0.5 },
 
   // Empty
   empty: { alignItems: 'center', paddingVertical: 64 },
-  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#1A1A1A', marginBottom: 6 },
-  emptySub: { fontSize: 14, color: '#B0B0B0', textAlign: 'center' },
+  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#3D2B1F', marginBottom: 6 },
+  emptySub: { fontSize: 14, color: '#B5A499', textAlign: 'center' },
 });

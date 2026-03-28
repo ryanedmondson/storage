@@ -67,35 +67,35 @@ export default function EventLogModal({ visible, onSave, onClose }) {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(61,43,31,0.4)', justifyContent: 'flex-end' },
   sheet: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFDF8',
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
     padding: 24, paddingBottom: 44, gap: 18,
     alignItems: 'stretch',
   },
   handle: {
     width: 36, height: 4, borderRadius: 2,
-    backgroundColor: '#E0E0E0', alignSelf: 'center', marginBottom: 4,
+    backgroundColor: '#D4C4B0', alignSelf: 'center', marginBottom: 4,
   },
-  title: { fontSize: 20, fontWeight: '800', color: '#1A1A1A', textAlign: 'center' },
+  title: { fontSize: 20, fontWeight: '800', color: '#3D2B1F', textAlign: 'center' },
   scoreLabel: {
-    fontSize: 11, fontWeight: '700', color: '#B0B0B0',
+    fontSize: 11, fontWeight: '700', color: '#B5A499',
     textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center',
   },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
   scoreBtn: {
     width: 56, height: 56, borderRadius: 14,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#EDE3D7',
     alignItems: 'center', justifyContent: 'center',
   },
-  scoreBtnSelected:     { backgroundColor: '#1A1A1A' },
-  scoreBtnText:         { fontSize: 19, fontWeight: '700', color: '#C0C0C0' },
+  scoreBtnSelected:     { backgroundColor: '#D4A437' },
+  scoreBtnText:         { fontSize: 19, fontWeight: '700', color: '#C4B5A8' },
   scoreBtnTextSelected: { color: '#fff' },
   saveBtn: {
-    backgroundColor: '#1A1A1A', borderRadius: 14,
+    backgroundColor: '#3D2B1F', borderRadius: 14,
     paddingVertical: 17, alignItems: 'center', marginTop: 2,
   },
-  saveBtnDisabled: { backgroundColor: '#EBEBEB' },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
+  saveBtnDisabled: { backgroundColor: '#E5D9CB' },
+  saveBtnText: { color: '#FFF8F0', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
 });
