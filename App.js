@@ -9,6 +9,7 @@ import DiarySection from './components/DiarySection';
 import DiaryEntryForm from './components/DiaryEntryForm';
 import EventLogModal from './components/EventLogModal';
 import DataScreen from './components/DataScreen';
+import InsightsScreen from './components/InsightsScreen';
 import useSentiment from './hooks/useSentiment';
 import useTodos from './hooks/useTodos';
 import useDiary from './hooks/useDiary';
@@ -80,6 +81,10 @@ export default function App() {
     return <DataScreen onClose={() => setScreen('main')} />;
   }
 
+  if (screen === 'insights') {
+    return <InsightsScreen onClose={() => setScreen('main')} />;
+  }
+
   if (screen === 'settings') {
     return (
       <SettingsScreen
@@ -99,6 +104,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => setScreen('insights')}>
+          <Text style={styles.topBarBtn}>Insights</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => setScreen('data')}>
           <Text style={styles.topBarBtn}>Data</Text>
         </TouchableOpacity>
