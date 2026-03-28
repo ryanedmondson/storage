@@ -16,16 +16,23 @@ import DataScreen from './DataScreen';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
+// ── Timeframes ─────────────────────────────────────────────────────────────────
+
+const TIMEFRAMES = [
+  { id: '30d', label: '30 days', days: 30, groupBy: 'day' },
+  { id: '90d', label: '90 days', days: 90, groupBy: 'month' },
+];
+
 // ── Metric definitions ─────────────────────────────────────────────────────────
 
 const METRICS = [
-  { id: 'sentiment',      label: 'Sentiment',              color: '#111', maxValue: 5,   suffix: '/5'  },
-  { id: 'todos_completed', label: 'Todos completed',        color: '#333', maxValue: null, suffix: ''   },
-  { id: 'todos_rate',     label: 'Completion rate',        color: '#555', maxValue: 100, suffix: '%'  },
-  { id: 'todos_stacked',  label: 'Todos by mode (stacked)', isStacked: true               },
-  { id: 'events_count',   label: 'Events logged',          color: '#777', maxValue: null, suffix: ''   },
-  { id: 'events_avg',     label: 'Avg event score',        color: '#999', maxValue: 10,  suffix: '/10'},
-  { id: 'diary_count',    label: 'Diary entries',          color: '#bbb', maxValue: null, suffix: ''   },
+  { id: 'sentiment',       label: 'Sentiment',               color: '#3D2B1F', maxValue: 5,   suffix: '/5'  },
+  { id: 'todos_completed', label: 'Todos completed',         color: '#5C4033', maxValue: null, suffix: ''   },
+  { id: 'todos_rate',      label: 'Completion rate',         color: '#8C7B6B', maxValue: 100, suffix: '%'  },
+  { id: 'todos_stacked',   label: 'Todos by mode (stacked)', isStacked: true                               },
+  { id: 'events_count',    label: 'Events logged',           color: '#B5A499', maxValue: null, suffix: ''   },
+  { id: 'events_avg',      label: 'Avg event score',         color: '#D4A437', maxValue: 10,  suffix: '/10'},
+  { id: 'diary_count',     label: 'Diary entries',           color: '#C4B5A8', maxValue: null, suffix: ''   },
 ];
 
 const SECONDARY_METRICS = [
@@ -35,8 +42,41 @@ const SECONDARY_METRICS = [
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function fmtLabel(date) {
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function groupKey(date, groupBy) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  if (groupBy === 'month') return `${y}-${m}`;
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function fmtGroupLabel(key, groupBy) {
+  if (groupBy === 'month') {
+    const [y, m] = key.split('-').map(Number);
+    return new Date(y, m - 1, 1).toLocaleString([], { month: 'short' });
+  }
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleString([], { month: 'short', day: 'numeric' });
+}
+
+function buildGroups(sessions, timeframeDef) {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - timeframeDef.days);
+
+  const filtered = [...sessions]
+    .reverse() // oldest first
+    .filter((s) => s.startTime >= cutoff);
+
+  const map = new Map();
+  for (const s of filtered) {
+    const key = groupKey(s.startTime, timeframeDef.groupBy);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(s);
+  }
+
+  return Array.from(map.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([key, items]) => ({ key, label: fmtGroupLabel(key, timeframeDef.groupBy), items }));
 }
 
 function todoCounts(todos) {
@@ -52,28 +92,44 @@ function todoCounts(todos) {
   return { doneA, totalA, doneB, totalB, doneTotal: doneA + doneB, total: totalA + totalB };
 }
 
-function getMetricValue(session, metricId) {
+function getSessionMetricValue(session, metricId) {
   switch (metricId) {
-    case 'sentiment':
-      return session.sentiment ?? 0;
-    case 'todos_completed':
-      return todoCounts(session.todos).doneTotal;
+    case 'sentiment':      return session.sentiment ?? 0;
+    case 'todos_completed': return todoCounts(session.todos).doneTotal;
     case 'todos_rate': {
       const { doneTotal, total } = todoCounts(session.todos);
       return total > 0 ? Math.round((doneTotal / total) * 100) : 0;
     }
-    case 'events_count':
-      return session.events?.length ?? 0;
+    case 'events_count':   return session.events?.length ?? 0;
     case 'events_avg': {
       const evts = session.events ?? [];
       if (!evts.length) return 0;
       return Math.round((evts.reduce((s, e) => s + e.score, 0) / evts.length) * 10) / 10;
     }
-    case 'diary_count':
-      return session.diary?.length ?? 0;
-    default:
-      return 0;
+    case 'diary_count':    return session.diary?.length ?? 0;
+    default:               return 0;
   }
+}
+
+// For counts: sum. For rates/averages: average non-zero values.
+const SUM_METRICS = new Set(['todos_completed', 'events_count', 'diary_count']);
+
+function getGroupMetricValue(groupItems, metricId) {
+  const values = groupItems.map((s) => getSessionMetricValue(s, metricId));
+  if (SUM_METRICS.has(metricId)) return values.reduce((a, b) => a + b, 0);
+  const nonZero = values.filter((v) => v > 0);
+  if (!nonZero.length) return 0;
+  return Math.round((nonZero.reduce((a, b) => a + b, 0) / nonZero.length) * 10) / 10;
+}
+
+function getGroupStackValue(groupItems) {
+  let doneA = 0, doneB = 0;
+  for (const s of groupItems) {
+    const c = todoCounts(s.todos);
+    doneA += c.doneA;
+    doneB += c.doneB;
+  }
+  return { doneA, doneB };
 }
 
 function niceMax(values, def) {
@@ -136,48 +192,46 @@ export default function InsightsScreen() {
   const { sessions } = useDailyState();
   const [primaryId, setPrimaryId] = useState('sentiment');
   const [secondaryId, setSecondaryId] = useState('none');
+  const [timeframeId, setTimeframeId] = useState('30d');
   const [showData, setShowData] = useState(false);
 
-  const primaryDef = METRICS.find((m) => m.id === primaryId);
-  const secondaryDef = secondaryId !== 'none' ? METRICS.find((m) => m.id === secondaryId) : null;
+  const primaryDef    = METRICS.find((m) => m.id === primaryId);
+  const secondaryDef  = secondaryId !== 'none' ? METRICS.find((m) => m.id === secondaryId) : null;
+  const timeframeDef  = TIMEFRAMES.find((t) => t.id === timeframeId);
 
-  // Oldest → newest for charts
-  const ordered = [...sessions].reverse();
-  const hasData = ordered.length > 0;
+  // Build grouped data points
+  const groups = buildGroups(sessions, timeframeDef);
+  const hasData = groups.length > 0;
 
-  const primaryValues = ordered.map((s) => getMetricValue(s, primaryId));
+  const primaryValues   = groups.map((g) => getGroupMetricValue(g.items, primaryId));
   const secondaryValues = secondaryDef
-    ? ordered.map((s) => getMetricValue(s, secondaryDef.id))
+    ? groups.map((g) => getGroupMetricValue(g.items, secondaryDef.id))
     : [];
 
-  const primaryMax = primaryDef?.isStacked ? undefined : niceMax(primaryValues, primaryDef);
+  const primaryMax   = primaryDef?.isStacked ? undefined : niceMax(primaryValues, primaryDef);
   const secondaryMax = secondaryDef ? niceMax(secondaryValues, secondaryDef) : undefined;
 
-  // Bar data
-  const barData = ordered.map((s, i) => ({
+  const barData = groups.map((g, i) => ({
     value: primaryValues[i],
-    label: fmtLabel(s.startTime),
-    frontColor: primaryDef?.color ?? '#111',
+    label: g.label,
+    frontColor: primaryDef?.color ?? '#3D2B1F',
   }));
 
-  // Stacked data (todos by mode)
-  const stackData = ordered.map((s) => {
-    const { doneA, doneB } = todoCounts(s.todos);
+  const stackData = groups.map((g) => {
+    const { doneA, doneB } = getGroupStackValue(g.items);
     return {
       stacks: [
-        { value: doneA || 0, color: '#111', marginBottom: 2 },
-        { value: doneB || 0, color: '#888' },
+        { value: doneA || 0, color: '#3D2B1F', marginBottom: 2 },
+        { value: doneB || 0, color: '#B5A499' },
       ],
-      label: fmtLabel(s.startTime),
+      label: g.label,
     };
   });
 
-  // Line (secondary)
-  const lineData = secondaryDef ? ordered.map((s, i) => ({ value: secondaryValues[i] })) : null;
+  const lineData = secondaryDef ? groups.map((g, i) => ({ value: secondaryValues[i] })) : null;
 
-  // Chart dimensions
-  const barSlotWidth = 38;
-  const chartWidth = Math.max(SCREEN_WIDTH - 72, ordered.length * barSlotWidth);
+  const barSlotWidth = 48;
+  const chartWidth = Math.max(SCREEN_WIDTH - 72, groups.length * barSlotWidth);
 
   const modeALabel = config.modes.a;
   const modeBLabel = config.modes.b;
@@ -198,6 +252,27 @@ export default function InsightsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+
+        {/* Timeframe selector */}
+        <View style={styles.timeframeRow}>
+          {TIMEFRAMES.map((tf) => (
+            <TouchableOpacity
+              key={tf.id}
+              style={[styles.timeframeBtn, timeframeId === tf.id && styles.timeframeBtnActive]}
+              onPress={() => setTimeframeId(tf.id)}
+            >
+              <Text style={[styles.timeframeBtnText, timeframeId === tf.id && styles.timeframeBtnTextActive]}>
+                {tf.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+          <View style={styles.groupByBadge}>
+            <Text style={styles.groupByText}>
+              grouped by {timeframeDef.groupBy}
+            </Text>
+          </View>
+        </View>
+
         {/* Metric selectors */}
         <View style={styles.card}>
           <MetricPicker
@@ -223,7 +298,7 @@ export default function InsightsScreen() {
 
         {!hasData ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>No data yet</Text>
+            <Text style={styles.emptyTitle}>No data in this period</Text>
             <Text style={styles.emptySub}>Keep tracking — your insights will appear here.</Text>
           </View>
         ) : (
@@ -232,11 +307,11 @@ export default function InsightsScreen() {
             <View style={styles.legend}>
               {primaryDef?.isStacked ? (
                 <>
-                  <LegendDot color="#111" label={`${modeALabel} todos`} />
-                  <LegendDot color="#888" label={`${modeBLabel} todos`} />
+                  <LegendDot color="#3D2B1F" label={`${modeALabel} todos`} />
+                  <LegendDot color="#B5A499" label={`${modeBLabel} todos`} />
                 </>
               ) : (
-                <LegendDot color={primaryDef?.color ?? '#111'} label={primaryDef?.label} />
+                <LegendDot color={primaryDef?.color ?? '#3D2B1F'} label={primaryDef?.label} />
               )}
               {secondaryDef && (
                 <LegendLine color="#e74c3c" label={secondaryDef.label} />
@@ -251,11 +326,11 @@ export default function InsightsScreen() {
                     stackData={stackData}
                     width={chartWidth}
                     barWidth={22}
-                    spacing={16}
+                    spacing={26}
                     noOfSections={4}
-                    xAxisColor="#ebebeb"
-                    yAxisColor="#ebebeb"
-                    rulesColor="#f5f5f5"
+                    xAxisColor="#EDE3D7"
+                    yAxisColor="#EDE3D7"
+                    rulesColor="#F5EEE3"
                     xAxisLabelTextStyle={styles.axisLabel}
                     yAxisTextStyle={styles.axisLabel}
                     isAnimated
@@ -265,13 +340,13 @@ export default function InsightsScreen() {
                     data={barData}
                     width={chartWidth}
                     barWidth={22}
-                    spacing={16}
+                    spacing={26}
                     noOfSections={5}
                     maxValue={primaryMax}
                     roundedTop
-                    xAxisColor="#ebebeb"
-                    yAxisColor="#ebebeb"
-                    rulesColor="#f5f5f5"
+                    xAxisColor="#EDE3D7"
+                    yAxisColor="#EDE3D7"
+                    rulesColor="#F5EEE3"
                     xAxisLabelTextStyle={styles.axisLabel}
                     yAxisTextStyle={styles.axisLabel}
                     showLine={!!secondaryDef}
@@ -307,7 +382,7 @@ export default function InsightsScreen() {
             {!primaryDef?.isStacked && primaryValues.length > 0 && (
               <View style={styles.statsRow}>
                 {[
-                  { label: 'Sessions', value: ordered.length },
+                  { label: 'Points', value: groups.length },
                   {
                     label: 'Avg',
                     value: avg(primaryValues).toFixed(1),
@@ -367,6 +442,18 @@ const styles = StyleSheet.create({
   dataBtnText: { fontSize: 13, fontWeight: '600', color: '#8C7B6B' },
 
   content: { padding: 16, gap: 14, paddingBottom: 40 },
+
+  // Timeframe
+  timeframeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  timeframeBtn: {
+    paddingHorizontal: 16, paddingVertical: 9, borderRadius: 20,
+    backgroundColor: '#EDE3D7',
+  },
+  timeframeBtnActive: { backgroundColor: '#3D2B1F' },
+  timeframeBtnText:   { fontSize: 13, fontWeight: '600', color: '#8C7B6B' },
+  timeframeBtnTextActive: { color: '#FFF8F0' },
+  groupByBadge: { marginLeft: 'auto' },
+  groupByText: { fontSize: 11, color: '#C4B5A8', fontWeight: '500', fontStyle: 'italic' },
 
   // Pickers
   card: {
