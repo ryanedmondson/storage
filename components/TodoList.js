@@ -1,8 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-function TodoRow({ todo, done, onToggle }) {
+function TodoRow({ todo, done, onToggle, last }) {
   return (
-    <TouchableOpacity style={styles.row} onPress={() => onToggle(todo.id)}>
+    <TouchableOpacity
+      style={[styles.row, !last && styles.rowBorder]}
+      onPress={() => onToggle(todo.id)}
+      activeOpacity={0.6}
+    >
       <View style={[styles.checkbox, done && styles.checkboxDone]}>
         {done && <Text style={styles.checkmark}>✓</Text>}
       </View>
@@ -12,96 +16,73 @@ function TodoRow({ todo, done, onToggle }) {
 }
 
 function Section({ title, todos, completions, onToggle }) {
+  if (todos.length === 0) return null;
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {todos.length === 0 ? (
-        <Text style={styles.emptyText}>None added yet — configure in Settings.</Text>
-      ) : (
-        todos.map((todo) => (
-          <TodoRow
-            key={todo.id}
-            todo={todo}
-            done={!!completions[todo.id]}
-            onToggle={onToggle}
-          />
-        ))
-      )}
+    <View style={styles.card}>
+      <Text style={styles.sectionLabel}>{title}</Text>
+      {todos.map((todo, i) => (
+        <TodoRow
+          key={todo.id}
+          todo={todo}
+          done={!!completions[todo.id]}
+          onToggle={onToggle}
+          last={i === todos.length - 1}
+        />
+      ))}
     </View>
   );
 }
 
 export default function TodoList({
-  fixedTodos,
-  fixedCompletions,
-  onToggleFixed,
-  dailyTodos,
-  dailyCompletions,
-  onToggleDaily,
+  fixedTodos, fixedCompletions, onToggleFixed,
+  dailyTodos, dailyCompletions, onToggleDaily,
 }) {
-  const hasAnything = fixedTodos.length > 0 || dailyTodos.length > 0;
-
-  if (!hasAnything) {
+  if (!fixedTodos.length && !dailyTodos.length) {
     return (
       <View style={styles.empty}>
-        <Text style={styles.emptyMain}>No to-dos for this mode yet.</Text>
-        <Text style={styles.emptyHint}>Add some in Settings.</Text>
+        <Text style={styles.emptyMain}>No to-dos for this mode.</Text>
+        <Text style={styles.emptyHint}>Configure them in Settings.</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.list}>
-      <Section
-        title="On activation"
-        todos={fixedTodos}
-        completions={fixedCompletions}
-        onToggle={onToggleFixed}
-      />
-      <Section
-        title="Daily"
-        todos={dailyTodos}
-        completions={dailyCompletions}
-        onToggle={onToggleDaily}
-      />
-    </View>
+    <>
+      <Section title="On activation" todos={fixedTodos} completions={fixedCompletions} onToggle={onToggleFixed} />
+      <Section title="Daily" todos={dailyTodos} completions={dailyCompletions} onToggle={onToggleDaily} />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { paddingHorizontal: 24, paddingTop: 4, gap: 24 },
-  section: { gap: 4 },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#aaa',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+  sectionLabel: {
+    fontSize: 11, fontWeight: '700', color: '#B0B0B0',
+    textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8,
   },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 12 },
+  rowBorder: { borderBottomWidth: 1, borderBottomColor: '#F2F2F2' },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 24, height: 24, borderRadius: 12,
+    borderWidth: 2, borderColor: '#DEDEDE',
+    alignItems: 'center', justifyContent: 'center',
   },
-  checkboxDone: { backgroundColor: '#000', borderColor: '#000' },
-  checkmark: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  todoLabel: { fontSize: 16, color: '#111', flex: 1 },
-  todoLabelDone: { textDecorationLine: 'line-through', color: '#aaa' },
-  empty: { alignItems: 'center', paddingTop: 16, gap: 4 },
-  emptyMain: { fontSize: 15, color: '#888' },
-  emptyHint: { fontSize: 13, color: '#bbb' },
-  emptyText: { fontSize: 14, color: '#ccc', paddingVertical: 6 },
+  checkboxDone: { backgroundColor: '#1A1A1A', borderColor: '#1A1A1A' },
+  checkmark:    { color: '#fff', fontSize: 12, fontWeight: '800' },
+  todoLabel:     { fontSize: 15, color: '#1A1A1A', flex: 1, fontWeight: '400' },
+  todoLabelDone: { textDecorationLine: 'line-through', color: '#C0C0C0' },
+  empty:         { alignItems: 'center', paddingVertical: 24, gap: 4 },
+  emptyMain:     { fontSize: 15, color: '#999' },
+  emptyHint:     { fontSize: 13, color: '#C0C0C0' },
 });

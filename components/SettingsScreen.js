@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Switch,
@@ -38,7 +37,6 @@ export default function SettingsScreen({
   onToggleSuggestedReminder,
   onAddCustomReminder,
   onDeleteCustomReminder,
-  onClose,
 }) {
   // Todo form state
   const [newLabel, setNewLabel] = useState('');
@@ -81,19 +79,15 @@ export default function SettingsScreen({
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Settings</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.doneBtn}>Done</Text>
-          </TouchableOpacity>
-        </View>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <View style={styles.titleRow}>
+        <Text style={styles.pageTitle}>Settings</Text>
+      </View>
 
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
 
           {/* ── To-dos ── */}
           {['a', 'b'].map((mode) => (
@@ -256,75 +250,65 @@ export default function SettingsScreen({
           </View>
 
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
-  flex: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  headerTitle: { fontSize: 18, fontWeight: '700' },
-  doneBtn: { fontSize: 16, color: '#000', fontWeight: '600' },
+  flex: { flex: 1, backgroundColor: '#F5F5F5' },
+  titleRow: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 8 },
+  pageTitle: { fontSize: 30, fontWeight: '800', color: '#1A1A1A', letterSpacing: -0.5 },
   scroll: { flex: 1 },
-  content: { padding: 20, gap: 24, paddingBottom: 40 },
-  section: { gap: 12 },
+  content: { padding: 16, gap: 20, paddingBottom: 40 },
+
+  section: {
+    backgroundColor: '#fff', borderRadius: 16, gap: 0,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+    overflow: 'hidden',
+  },
   sectionTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#888',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+    fontSize: 11, fontWeight: '700', color: '#B0B0B0',
+    textTransform: 'uppercase', letterSpacing: 1,
+    paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 12,
+    borderTopWidth: 1, borderTopColor: '#F2F2F2',
   },
-  rowLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
-  rowLabel: { fontSize: 15, color: '#111' },
+  rowLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingRight: 8 },
+  rowLabel: { fontSize: 15, color: '#1A1A1A', fontWeight: '400' },
   modePill: {
-    fontSize: 11, fontWeight: '600', color: '#888',
-    backgroundColor: '#f0f0f0', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4,
+    fontSize: 11, fontWeight: '600', color: '#717171',
+    backgroundColor: '#F0F0F0', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6,
   },
   typePill: {
-    fontSize: 11, fontWeight: '600', color: '#555',
-    backgroundColor: '#e8e8e8', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4,
+    fontSize: 11, fontWeight: '600', color: '#717171',
+    backgroundColor: '#EBEBEB', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6,
   },
   intervalPill: {
-    fontSize: 11, fontWeight: '600', color: '#555',
-    backgroundColor: '#e8e8e8', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4,
+    fontSize: 11, fontWeight: '600', color: '#717171',
+    backgroundColor: '#EBEBEB', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6,
   },
-  deleteBtn: { fontSize: 14, color: '#e00', fontWeight: '600', paddingLeft: 12 },
-  emptyText: { fontSize: 14, color: '#bbb' },
-  addForm: { gap: 10, paddingTop: 4 },
+  deleteBtn: { fontSize: 13, color: '#FF3B30', fontWeight: '600' },
+  emptyText: { fontSize: 14, color: '#C0C0C0', paddingHorizontal: 16, paddingBottom: 14 },
+  addForm: { gap: 10, padding: 16, borderTopWidth: 1, borderTopColor: '#F2F2F2' },
   input: {
-    borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 8,
-    paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: '#111',
+    borderWidth: 1, borderColor: '#EBEBEB', borderRadius: 12,
+    paddingHorizontal: 14, paddingVertical: 11, fontSize: 15, color: '#1A1A1A',
+    backgroundColor: '#FAFAFA',
   },
-  pickerLabel: { fontSize: 12, color: '#aaa', fontWeight: '600', marginBottom: -4 },
-  selector: { flexDirection: 'row', gap: 6 },
+  pickerLabel: { fontSize: 12, color: '#B0B0B0', fontWeight: '600', marginBottom: -4 },
+  selector: { flexDirection: 'row', gap: 8 },
   selectorBtn: {
-    flex: 1, paddingVertical: 10, borderRadius: 8,
-    borderWidth: 1, borderColor: '#ddd', alignItems: 'center',
+    flex: 1, paddingVertical: 10, borderRadius: 10,
+    borderWidth: 1.5, borderColor: '#EBEBEB', alignItems: 'center', backgroundColor: '#FAFAFA',
   },
-  selectorBtnActive: { backgroundColor: '#000', borderColor: '#000' },
-  selectorBtnText: { fontSize: 13, color: '#555', fontWeight: '600' },
+  selectorBtnActive:     { backgroundColor: '#1A1A1A', borderColor: '#1A1A1A' },
+  selectorBtnText:       { fontSize: 13, color: '#717171', fontWeight: '600' },
   selectorBtnTextActive: { color: '#fff' },
   addBtn: {
-    backgroundColor: '#000', borderRadius: 8, paddingVertical: 12, alignItems: 'center',
+    backgroundColor: '#1A1A1A', borderRadius: 12, paddingVertical: 13, alignItems: 'center',
   },
-  addBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  addBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

@@ -26,11 +26,12 @@ export default function EventLogModal({ visible, onSave, onClose }) {
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.backdrop}>
           <TouchableWithoutFeedback>
             <View style={styles.sheet}>
+              <View style={styles.handle} />
               <Text style={styles.title}>{config.eventLog.buttonLabel}</Text>
               <Text style={styles.scoreLabel}>{config.eventLog.scoreLabel}</Text>
 
@@ -40,6 +41,7 @@ export default function EventLogModal({ visible, onSave, onClose }) {
                     key={s}
                     style={[styles.scoreBtn, selected === s && styles.scoreBtnSelected]}
                     onPress={() => setSelected(s)}
+                    activeOpacity={0.7}
                   >
                     <Text style={[styles.scoreBtnText, selected === s && styles.scoreBtnTextSelected]}>
                       {s}
@@ -52,6 +54,7 @@ export default function EventLogModal({ visible, onSave, onClose }) {
                 style={[styles.saveBtn, selected === null && styles.saveBtnDisabled]}
                 onPress={handleSave}
                 disabled={selected === null}
+                activeOpacity={0.88}
               >
                 <Text style={styles.saveBtnText}>Save</Text>
               </TouchableOpacity>
@@ -64,72 +67,35 @@ export default function EventLogModal({ visible, onSave, onClose }) {
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
-    paddingBottom: 40,
-    gap: 16,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    padding: 24, paddingBottom: 44, gap: 18,
+    alignItems: 'stretch',
   },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
+  handle: {
+    width: 36, height: 4, borderRadius: 2,
+    backgroundColor: '#E0E0E0', alignSelf: 'center', marginBottom: 4,
   },
+  title: { fontSize: 20, fontWeight: '800', color: '#1A1A1A', textAlign: 'center' },
   scoreLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#aaa',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    textAlign: 'center',
+    fontSize: 11, fontWeight: '700', color: '#B0B0B0',
+    textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center',
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'center',
-  },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
   scoreBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#e0e0e0',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 56, height: 56, borderRadius: 14,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center', justifyContent: 'center',
   },
-  scoreBtnSelected: {
-    backgroundColor: '#000',
-    borderColor: '#000',
-  },
-  scoreBtnText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#ccc',
-  },
-  scoreBtnTextSelected: {
-    color: '#fff',
-  },
+  scoreBtnSelected:     { backgroundColor: '#1A1A1A' },
+  scoreBtnText:         { fontSize: 19, fontWeight: '700', color: '#C0C0C0' },
+  scoreBtnTextSelected: { color: '#fff' },
   saveBtn: {
-    backgroundColor: '#000',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 4,
+    backgroundColor: '#1A1A1A', borderRadius: 14,
+    paddingVertical: 17, alignItems: 'center', marginTop: 2,
   },
-  saveBtnDisabled: {
-    backgroundColor: '#e0e0e0',
-  },
-  saveBtnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
+  saveBtnDisabled: { backgroundColor: '#EBEBEB' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
 });

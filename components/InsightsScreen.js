@@ -12,6 +12,7 @@ import {
 import { BarChart } from 'react-native-gifted-charts';
 import config from '../config';
 import useDailyState from '../hooks/useDailyState';
+import DataScreen from './DataScreen';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -131,10 +132,11 @@ function MetricPicker({ label, value, onChange, options }) {
 
 // ── InsightsScreen ─────────────────────────────────────────────────────────────
 
-export default function InsightsScreen({ onClose }) {
+export default function InsightsScreen() {
   const { sessions } = useDailyState();
   const [primaryId, setPrimaryId] = useState('sentiment');
   const [secondaryId, setSecondaryId] = useState('none');
+  const [showData, setShowData] = useState(false);
 
   const primaryDef = METRICS.find((m) => m.id === primaryId);
   const secondaryDef = secondaryId !== 'none' ? METRICS.find((m) => m.id === secondaryId) : null;
@@ -181,12 +183,17 @@ export default function InsightsScreen({ onClose }) {
   const modeBLabel = config.modes.b;
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.safe}>
+      {/* Data modal */}
+      <Modal visible={showData} animationType="slide">
+        <DataScreen onClose={() => setShowData(false)} />
+      </Modal>
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Insights</Text>
-        <TouchableOpacity onPress={onClose}>
-          <Text style={styles.doneBtn}>Done</Text>
+        <TouchableOpacity style={styles.dataBtn} onPress={() => setShowData(true)}>
+          <Text style={styles.dataBtnText}>Raw data</Text>
         </TouchableOpacity>
       </View>
 
@@ -322,7 +329,7 @@ export default function InsightsScreen({ onClose }) {
           </>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -347,79 +354,79 @@ function LegendLine({ color, label }) {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#f8f8f8' },
+  safe: { flex: 1, backgroundColor: '#F5F5F5' },
 
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 20, paddingVertical: 14,
-    borderBottomWidth: 1, borderBottomColor: '#f0f0f0', backgroundColor: '#fff',
+    paddingHorizontal: 20, paddingTop: 24, paddingBottom: 12,
   },
-  headerTitle: { fontSize: 18, fontWeight: '700' },
-  doneBtn: { fontSize: 16, color: '#000', fontWeight: '600' },
+  headerTitle: { fontSize: 30, fontWeight: '800', color: '#1A1A1A', letterSpacing: -0.5 },
+  dataBtn: {
+    backgroundColor: '#F0F0F0', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+  },
+  dataBtnText: { fontSize: 13, fontWeight: '600', color: '#717171' },
 
   content: { padding: 16, gap: 14, paddingBottom: 40 },
 
   // Pickers
   card: {
-    backgroundColor: '#fff', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 4,
+    backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 4,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
   },
-  cardDivider: { height: 1, backgroundColor: '#f0f0f0' },
+  cardDivider: { height: 1, backgroundColor: '#F2F2F2' },
   pickerRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 12,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14,
   },
-  pickerLabel: { fontSize: 14, fontWeight: '600', color: '#333' },
+  pickerLabel: { fontSize: 15, fontWeight: '600', color: '#1A1A1A' },
   pickerBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  pickerBtnText: { fontSize: 14, color: '#888' },
-  pickerCaret: { fontSize: 18, color: '#ccc', lineHeight: 20 },
+  pickerBtnText: { fontSize: 14, color: '#B0B0B0', fontWeight: '500' },
+  pickerCaret: { fontSize: 20, color: '#D0D0D0', lineHeight: 22 },
 
   // Modal sheet
-  overlay: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end',
-  },
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
   sheet: {
-    backgroundColor: '#fff', borderTopLeftRadius: 20, borderTopRightRadius: 20,
-    paddingHorizontal: 20, paddingTop: 16, paddingBottom: 36,
+    backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40,
   },
   sheetTitle: {
-    fontSize: 11, fontWeight: '700', color: '#aaa',
-    textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8,
+    fontSize: 11, fontWeight: '700', color: '#B0B0B0',
+    textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
   },
   sheetOption: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#f5f5f5',
+    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F2F2F2',
   },
-  sheetOptionText: { fontSize: 15, color: '#333' },
-  sheetOptionActive: { fontWeight: '700', color: '#000' },
-  sheetCheck: { fontSize: 14, color: '#000', fontWeight: '700' },
+  sheetOptionText: { fontSize: 16, color: '#1A1A1A', fontWeight: '400' },
+  sheetOptionActive: { fontWeight: '700', color: '#1A1A1A' },
+  sheetCheck: { fontSize: 15, color: '#1A1A1A', fontWeight: '700' },
 
   // Legend
   legend: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 4 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   legendDot: { width: 10, height: 10, borderRadius: 5 },
-  legendLineSwatch: { width: 16, height: 3, borderRadius: 2 },
-  legendText: { fontSize: 12, color: '#666' },
+  legendLineSwatch: { width: 18, height: 3, borderRadius: 2 },
+  legendText: { fontSize: 12, color: '#717171', fontWeight: '500' },
 
   // Chart
   chartCard: {
-    backgroundColor: '#fff', borderRadius: 12, padding: 14, overflow: 'hidden',
+    backgroundColor: '#fff', borderRadius: 16, padding: 14, overflow: 'hidden',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
   },
-  axisLabel: { fontSize: 9, color: '#aaa' },
+  axisLabel: { fontSize: 9, color: '#C0C0C0' },
 
   // Stats
-  statsRow: {
-    flexDirection: 'row', gap: 8,
-  },
+  statsRow: { flexDirection: 'row', gap: 10 },
   statBox: {
-    flex: 1, backgroundColor: '#fff', borderRadius: 12,
-    paddingVertical: 14, alignItems: 'center',
+    flex: 1, backgroundColor: '#fff', borderRadius: 16,
+    paddingVertical: 16, alignItems: 'center',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
   },
-  statValue: { fontSize: 20, fontWeight: '800', color: '#111' },
-  statSuffix: { fontSize: 11, fontWeight: '400', color: '#aaa' },
-  statLabel: { fontSize: 10, color: '#aaa', fontWeight: '600', marginTop: 2, textTransform: 'uppercase' },
+  statValue: { fontSize: 22, fontWeight: '800', color: '#1A1A1A' },
+  statSuffix: { fontSize: 12, fontWeight: '400', color: '#B0B0B0' },
+  statLabel: { fontSize: 10, color: '#B0B0B0', fontWeight: '600', marginTop: 3, textTransform: 'uppercase', letterSpacing: 0.5 },
 
   // Empty
-  empty: { alignItems: 'center', paddingVertical: 60 },
-  emptyTitle: { fontSize: 16, fontWeight: '700', color: '#333', marginBottom: 6 },
-  emptySub: { fontSize: 14, color: '#aaa', textAlign: 'center' },
+  empty: { alignItems: 'center', paddingVertical: 64 },
+  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#1A1A1A', marginBottom: 6 },
+  emptySub: { fontSize: 14, color: '#B0B0B0', textAlign: 'center' },
 });

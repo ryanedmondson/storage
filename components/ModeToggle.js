@@ -3,41 +3,37 @@ import config from '../config';
 
 export default function ModeToggle({ mode, onToggle }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Current mode</Text>
-      <Text style={styles.mode}>{config.modes[mode]}</Text>
-      <TouchableOpacity style={styles.button} onPress={onToggle}>
-        <Text style={styles.buttonText}>{config.buttonLabel}</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity style={styles.pill} onPress={onToggle} activeOpacity={0.7}>
+      <View style={styles.dot} />
+      <Text style={styles.label}>{config.modes[mode]}</Text>
+      <Text style={styles.arrow}>⇄</Text>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  pill: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: 7,
+    backgroundColor: '#EFEFEF',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 20,
+  },
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#1A1A1A',
   },
   label: {
     fontSize: 14,
-    color: '#888',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  mode: {
-    fontSize: 36,
-    fontWeight: '700',
-  },
-  button: {
-    marginTop: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    backgroundColor: '#000',
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
     fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  arrow: {
+    fontSize: 13,
+    color: '#999',
   },
 });
