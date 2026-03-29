@@ -48,7 +48,6 @@ function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom,
 
   return (
     <View style={ss.group}>
-      <Text style={ss.groupLabel}>{config.modes[modeKey]}</Text>
 
       {suggested.map((s, i) => (
         <View key={s.id} style={[ss.row, (i < suggested.length - 1 || customs.length > 0 || hasReminders) && ss.rowBorder]}>
@@ -116,7 +115,7 @@ function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom,
   );
 }
 
-function TodoSettingsSheet({ visible, onClose, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom, reminderDefs, onToggleSuggestedReminder, onDeleteCustomReminder }) {
+function TodoSettingsSheet({ visible, onClose, mode, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom, reminderDefs, onToggleSuggestedReminder, onDeleteCustomReminder }) {
   const title = type === 'fixed' ? 'On activation' : 'Daily';
 
   return (
@@ -128,20 +127,17 @@ function TodoSettingsSheet({ visible, onClose, type, definitions, onToggleSugges
               <View style={ss.handle} />
               <Text style={ss.title}>{title} settings</Text>
               <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={ss.sheetScroll} style={ss.sheetScrollView}>
-                {['a', 'b'].map((m) => (
-                  <ModeGroup
-                    key={m}
-                    modeKey={m}
-                    type={type}
-                    definitions={definitions}
-                    onToggleSuggested={onToggleSuggested}
-                    onAddCustom={onAddCustom}
-                    onDeleteCustom={onDeleteCustom}
-                    reminderDefs={reminderDefs}
-                    onToggleSuggestedReminder={onToggleSuggestedReminder}
-                    onDeleteCustomReminder={onDeleteCustomReminder}
-                  />
-                ))}
+                <ModeGroup
+                  modeKey={mode}
+                  type={type}
+                  definitions={definitions}
+                  onToggleSuggested={onToggleSuggested}
+                  onAddCustom={onAddCustom}
+                  onDeleteCustom={onDeleteCustom}
+                  reminderDefs={reminderDefs}
+                  onToggleSuggestedReminder={onToggleSuggestedReminder}
+                  onDeleteCustomReminder={onDeleteCustomReminder}
+                />
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
@@ -177,6 +173,7 @@ function Section({ title, type, todos, completions, onToggle, mode, definitions,
       <TodoSettingsSheet
         visible={settingsOpen}
         onClose={() => setSettingsOpen(false)}
+        mode={mode}
         type={type}
         definitions={definitions}
         onToggleSuggested={onToggleSuggested}
