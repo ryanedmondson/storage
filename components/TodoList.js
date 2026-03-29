@@ -15,21 +15,64 @@ import config from '../config';
 
 // ── Settings sheet ─────────────────────────────────────────────────────────────
 
-function TodoSettingsSheet({ visible, onClose, mode, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom }) {
+function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom }) {
   const [newLabel, setNewLabel] = useState('');
 
-  const suggested = config.suggestedTodos.filter((s) => s.mode === mode && s.type === type);
-  const customs   = definitions.filter((d) => !d.isSuggested && d.mode === mode && d.type === type);
-
+  const suggested = config.suggestedTodos.filter((s) => s.mode === modeKey && s.type === type);
+  const customs   = definitions.filter((d) => !d.isSuggested && d.mode === modeKey && d.type === type);
   const isEnabled = (id) => definitions.find((d) => d.id === id)?.enabled ?? false;
 
   const handleAdd = () => {
     const label = newLabel.trim();
     if (!label) return;
-    onAddCustom(mode, label, type);
+    onAddCustom(modeKey, label, type);
     setNewLabel('');
   };
 
+  return (
+    <View style={ss.group}>
+      <Text style={ss.groupLabel}>{config.modes[modeKey]}</Text>
+
+      {suggested.map((s, i) => (
+        <View key={s.id} style={[ss.row, (i < suggested.length - 1 || customs.length > 0) && ss.rowBorder]}>
+          <Text style={ss.rowLabel}>{s.label}</Text>
+          <Switch
+            value={isEnabled(s.id)}
+            onValueChange={() => onToggleSuggested(s.id)}
+            trackColor={{ true: '#3D2B1F' }}
+            thumbColor="#fff"
+          />
+        </View>
+      ))}
+
+      {customs.map((todo, i) => (
+        <View key={todo.id} style={[ss.row, i < customs.length - 1 && ss.rowBorder]}>
+          <Text style={ss.rowLabel}>{todo.label}</Text>
+          <TouchableOpacity onPress={() => onDeleteCustom(todo.id)}>
+            <Text style={ss.deleteBtn}>Delete</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+
+      <View style={ss.addForm}>
+        <TextInput
+          style={ss.input}
+          placeholder="Add to-do…"
+          placeholderTextColor="#C4B5A8"
+          value={newLabel}
+          onChangeText={setNewLabel}
+          returnKeyType="done"
+          onSubmitEditing={handleAdd}
+        />
+        <TouchableOpacity style={ss.addBtn} onPress={handleAdd}>
+          <Text style={ss.addBtnText}>Add</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function TodoSettingsSheet({ visible, onClose, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom }) {
   const title = type === 'fixed' ? 'On activation' : 'Daily';
 
   return (
@@ -40,56 +83,19 @@ function TodoSettingsSheet({ visible, onClose, mode, type, definitions, onToggle
             <View style={ss.sheet}>
               <View style={ss.handle} />
               <Text style={ss.title}>{title} settings</Text>
-
-              {/* Suggested */}
-              {suggested.length > 0 && (
-                <View style={ss.group}>
-                  <Text style={ss.groupLabel}>Suggested</Text>
-                  {suggested.map((s, i) => (
-                    <View key={s.id} style={[ss.row, i < suggested.length - 1 && ss.rowBorder]}>
-                      <Text style={ss.rowLabel}>{s.label}</Text>
-                      <Switch
-                        value={isEnabled(s.id)}
-                        onValueChange={() => onToggleSuggested(s.id)}
-                        trackColor={{ true: '#3D2B1F' }}
-                        thumbColor="#fff"
-                      />
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Custom */}
-              <View style={ss.group}>
-                <Text style={ss.groupLabel}>Custom</Text>
-                {customs.length === 0 && (
-                  <Text style={ss.empty}>No custom to-dos yet.</Text>
-                )}
-                {customs.map((todo, i) => (
-                  <View key={todo.id} style={[ss.row, i < customs.length - 1 && ss.rowBorder]}>
-                    <Text style={ss.rowLabel}>{todo.label}</Text>
-                    <TouchableOpacity onPress={() => onDeleteCustom(todo.id)}>
-                      <Text style={ss.deleteBtn}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-
-                {/* Add form */}
-                <View style={ss.addForm}>
-                  <TextInput
-                    style={ss.input}
-                    placeholder="New to-do…"
-                    placeholderTextColor="#C4B5A8"
-                    value={newLabel}
-                    onChangeText={setNewLabel}
-                    returnKeyType="done"
-                    onSubmitEditing={handleAdd}
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={ss.sheetScroll} style={ss.sheetScrollView}>
+                {['a', 'b'].map((m) => (
+                  <ModeGroup
+                    key={m}
+                    modeKey={m}
+                    type={type}
+                    definitions={definitions}
+                    onToggleSuggested={onToggleSuggested}
+                    onAddCustom={onAddCustom}
+                    onDeleteCustom={onDeleteCustom}
                   />
-                  <TouchableOpacity style={ss.addBtn} onPress={handleAdd}>
-                    <Text style={ss.addBtnText}>Add</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+                ))}
+              </ScrollView>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -124,7 +130,6 @@ function Section({ title, type, todos, completions, onToggle, mode, definitions,
       <TodoSettingsSheet
         visible={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        mode={mode}
         type={type}
         definitions={definitions}
         onToggleSuggested={onToggleSuggested}
@@ -240,8 +245,10 @@ const ss = StyleSheet.create({
     backgroundColor: '#FFFDF8',
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
     paddingHorizontal: 20, paddingTop: 16, paddingBottom: 44,
-    gap: 16, maxHeight: '80%',
+    maxHeight: '85%',
   },
+  sheetScrollView: { marginTop: 12 },
+  sheetScroll: { gap: 16, paddingBottom: 8 },
   handle: {
     width: 36, height: 4, borderRadius: 2,
     backgroundColor: '#D4C4B0', alignSelf: 'center', marginBottom: 4,
