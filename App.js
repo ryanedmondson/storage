@@ -152,6 +152,9 @@ export default function App() {
                   onToggleSuggested={toggleSuggested}
                   onAddCustom={addCustomTodo}
                   onDeleteCustom={deleteCustomTodo}
+                  reminderDefs={reminderDefs}
+                  onToggleSuggestedReminder={toggleSuggestedReminder}
+                  onDeleteCustomReminder={deleteCustomReminder}
                 />
                 <DiarySection
                   entries={entries}

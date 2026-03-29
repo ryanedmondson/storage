@@ -15,12 +15,29 @@ import config from '../config';
 
 // ── Settings sheet ─────────────────────────────────────────────────────────────
 
-function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom }) {
+const formatInterval = (m) => {
+  if (m < 60) return `${m}m`;
+  if (m % 60 === 0) return `${m / 60}h`;
+  return `${Math.floor(m / 60)}h ${m % 60}m`;
+};
+
+function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom, reminderDefs, onToggleSuggestedReminder, onDeleteCustomReminder }) {
   const [newLabel, setNewLabel] = useState('');
 
   const suggested = config.suggestedTodos.filter((s) => s.mode === modeKey && s.type === type);
   const customs   = definitions.filter((d) => !d.isSuggested && d.mode === modeKey && d.type === type);
   const isEnabled = (id) => definitions.find((d) => d.id === id)?.enabled ?? false;
+
+  // Reminders only appear in the "On activation" (fixed) section
+  const suggestedReminders = type === 'fixed'
+    ? config.reminders.filter((r) => r.mode === modeKey)
+    : [];
+  const customReminders = type === 'fixed'
+    ? (reminderDefs ?? []).filter((d) => !d.isSuggested && d.mode === modeKey)
+    : [];
+  const isReminderEnabled = (id) => (reminderDefs ?? []).find((d) => d.id === id)?.enabled ?? false;
+
+  const hasReminders = suggestedReminders.length > 0 || customReminders.length > 0;
 
   const handleAdd = () => {
     const label = newLabel.trim();
@@ -34,7 +51,7 @@ function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom,
       <Text style={ss.groupLabel}>{config.modes[modeKey]}</Text>
 
       {suggested.map((s, i) => (
-        <View key={s.id} style={[ss.row, (i < suggested.length - 1 || customs.length > 0) && ss.rowBorder]}>
+        <View key={s.id} style={[ss.row, (i < suggested.length - 1 || customs.length > 0 || hasReminders) && ss.rowBorder]}>
           <Text style={ss.rowLabel}>{s.label}</Text>
           <Switch
             value={isEnabled(s.id)}
@@ -46,9 +63,36 @@ function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom,
       ))}
 
       {customs.map((todo, i) => (
-        <View key={todo.id} style={[ss.row, i < customs.length - 1 && ss.rowBorder]}>
+        <View key={todo.id} style={[ss.row, (i < customs.length - 1 || hasReminders) && ss.rowBorder]}>
           <Text style={ss.rowLabel}>{todo.label}</Text>
           <TouchableOpacity onPress={() => onDeleteCustom(todo.id)}>
+            <Text style={ss.deleteBtn}>Delete</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+
+      {suggestedReminders.map((r, i) => (
+        <View key={r.id} style={[ss.row, (i < suggestedReminders.length - 1 || customReminders.length > 0) && ss.rowBorder]}>
+          <View style={ss.reminderLeft}>
+            <Text style={ss.rowLabel}>{r.label}</Text>
+            <Text style={ss.pill}>Every {formatInterval(r.intervalMinutes)}</Text>
+          </View>
+          <Switch
+            value={isReminderEnabled(r.id)}
+            onValueChange={() => onToggleSuggestedReminder?.(r.id)}
+            trackColor={{ true: '#3D2B1F' }}
+            thumbColor="#fff"
+          />
+        </View>
+      ))}
+
+      {customReminders.map((r, i) => (
+        <View key={r.id} style={[ss.row, i < customReminders.length - 1 && ss.rowBorder]}>
+          <View style={ss.reminderLeft}>
+            <Text style={ss.rowLabel}>{r.label}</Text>
+            <Text style={ss.pill}>Every {formatInterval(r.intervalMinutes)}</Text>
+          </View>
+          <TouchableOpacity onPress={() => onDeleteCustomReminder?.(r.id)}>
             <Text style={ss.deleteBtn}>Delete</Text>
           </TouchableOpacity>
         </View>
@@ -72,7 +116,7 @@ function ModeGroup({ modeKey, type, definitions, onToggleSuggested, onAddCustom,
   );
 }
 
-function TodoSettingsSheet({ visible, onClose, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom }) {
+function TodoSettingsSheet({ visible, onClose, type, definitions, onToggleSuggested, onAddCustom, onDeleteCustom, reminderDefs, onToggleSuggestedReminder, onDeleteCustomReminder }) {
   const title = type === 'fixed' ? 'On activation' : 'Daily';
 
   return (
@@ -93,6 +137,9 @@ function TodoSettingsSheet({ visible, onClose, type, definitions, onToggleSugges
                     onToggleSuggested={onToggleSuggested}
                     onAddCustom={onAddCustom}
                     onDeleteCustom={onDeleteCustom}
+                    reminderDefs={reminderDefs}
+                    onToggleSuggestedReminder={onToggleSuggestedReminder}
+                    onDeleteCustomReminder={onDeleteCustomReminder}
                   />
                 ))}
               </ScrollView>
@@ -121,7 +168,7 @@ function TodoRow({ todo, done, onToggle, last }) {
   );
 }
 
-function Section({ title, type, todos, completions, onToggle, mode, definitions, onToggleSuggested, onAddCustom, onDeleteCustom }) {
+function Section({ title, type, todos, completions, onToggle, mode, definitions, onToggleSuggested, onAddCustom, onDeleteCustom, reminderDefs, onToggleSuggestedReminder, onDeleteCustomReminder }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   if (todos.length === 0 && !definitions) return null;
 
@@ -135,6 +182,9 @@ function Section({ title, type, todos, completions, onToggle, mode, definitions,
         onToggleSuggested={onToggleSuggested}
         onAddCustom={onAddCustom}
         onDeleteCustom={onDeleteCustom}
+        reminderDefs={reminderDefs}
+        onToggleSuggestedReminder={onToggleSuggestedReminder}
+        onDeleteCustomReminder={onDeleteCustomReminder}
       />
 
       <View style={styles.card}>
@@ -169,6 +219,7 @@ export default function TodoList({
   fixedTodos, fixedCompletions, onToggleFixed,
   dailyTodos, dailyCompletions, onToggleDaily,
   mode, definitions, onToggleSuggested, onAddCustom, onDeleteCustom,
+  reminderDefs, onToggleSuggestedReminder, onDeleteCustomReminder,
 }) {
   return (
     <>
@@ -183,6 +234,9 @@ export default function TodoList({
         onToggleSuggested={onToggleSuggested}
         onAddCustom={onAddCustom}
         onDeleteCustom={onDeleteCustom}
+        reminderDefs={reminderDefs}
+        onToggleSuggestedReminder={onToggleSuggestedReminder}
+        onDeleteCustomReminder={onDeleteCustomReminder}
       />
       <Section
         title="Daily"
@@ -282,4 +336,9 @@ const ss = StyleSheet.create({
     paddingHorizontal: 16, justifyContent: 'center',
   },
   addBtnText: { color: '#FFF8F0', fontSize: 14, fontWeight: '700' },
+  reminderLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, paddingRight: 8 },
+  pill: {
+    fontSize: 11, fontWeight: '600', color: '#8C7B6B',
+    backgroundColor: '#EDE3D7', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6,
+  },
 });
