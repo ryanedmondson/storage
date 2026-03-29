@@ -147,6 +147,11 @@ export default function App() {
                   dailyTodos={todosForMode(mode, 'daily')}
                   dailyCompletions={completions}
                   onToggleDaily={toggleCompletion}
+                  mode={mode}
+                  definitions={definitions}
+                  onToggleSuggested={toggleSuggested}
+                  onAddCustom={addCustomTodo}
+                  onDeleteCustom={deleteCustomTodo}
                 />
                 <DiarySection
                   entries={entries}
@@ -171,10 +176,6 @@ export default function App() {
 
         {tab === 'settings' && (
           <SettingsScreen
-            definitions={definitions}
-            onToggleSuggested={toggleSuggested}
-            onAddCustom={addCustomTodo}
-            onDeleteCustom={deleteCustomTodo}
             reminderDefs={reminderDefs}
             onToggleSuggestedReminder={toggleSuggestedReminder}
             onAddCustomReminder={addCustomReminder}
