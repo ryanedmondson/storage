@@ -15,6 +15,7 @@ import DiarySection from './components/DiarySection';
 import EventLogModal from './components/EventLogModal';
 import InsightsScreen from './components/InsightsScreen';
 import ModeToggle from './components/ModeToggle';
+import SearchScreen from './components/SearchScreen';
 import SettingsScreen from './components/SettingsScreen';
 import SentimentTracker from './components/SentimentTracker';
 import TodoList from './components/TodoList';
@@ -30,6 +31,7 @@ import useTodos from './hooks/useTodos';
 
 const TABS = [
   { id: 'todos',    label: 'To-dos',   icon: 'list',      outline: 'list-outline'      },
+  { id: 'search',   label: 'Search',   icon: 'search',    outline: 'search-outline'    },
   { id: 'insights', label: 'Insights', icon: 'bar-chart', outline: 'bar-chart-outline' },
   { id: 'settings', label: 'Settings', icon: 'settings',  outline: 'settings-outline'  },
 ];
@@ -174,6 +176,8 @@ export default function App() {
             </TouchableOpacity>
           </View>
         )}
+
+        {tab === 'search' && <SearchScreen mode={mode} />}
 
         {tab === 'insights' && <InsightsScreen />}
 

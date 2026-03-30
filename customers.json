@@ -1,0 +1,12 @@
+[
+  { "id": "1",  "name": "Acme Corp",          "ratings": { "a": "good", "b": "bad"  } },
+  { "id": "2",  "name": "Bright Solutions",   "ratings": { "a": "good", "b": "good" } },
+  { "id": "3",  "name": "Cobalt Industries",  "ratings": { "a": "bad",  "b": "good" } },
+  { "id": "4",  "name": "Delta Partners",     "ratings": { "a": "good", "b": "bad"  } },
+  { "id": "5",  "name": "Echo Ventures",      "ratings": { "a": "bad",  "b": "bad"  } },
+  { "id": "6",  "name": "Fortis Group",       "ratings": { "a": "good", "b": "good" } },
+  { "id": "7",  "name": "Granite Co",         "ratings": { "a": "bad",  "b": "good" } },
+  { "id": "8",  "name": "Horizon Labs",       "ratings": { "a": "good", "b": "bad"  } },
+  { "id": "9",  "name": "Ironclad Systems",   "ratings": { "a": "bad",  "b": "good" } },
+  { "id": "10", "name": "Juniper Tech",       "ratings": { "a": "good", "b": "good" } }
+]
